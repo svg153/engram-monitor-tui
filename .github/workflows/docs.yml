@@ -19,8 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - name: Prepare docs
         run: |
           mkdir -p docs
