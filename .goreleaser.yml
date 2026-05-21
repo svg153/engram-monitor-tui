@@ -1,0 +1,30 @@
+project_name: engram-monitor-tui
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    main: ./cmd/engram-monitor-tui
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    binary: engram-monitor-tui
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+
+changelog:
+  use: git
+
+snapshot:
+  name_template: "{{ .Tag }}"

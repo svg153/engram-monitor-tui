@@ -1,0 +1,8 @@
+/bin/
+/dist/
+/engram-monitor-tui
+/coverage.out
+/coverage.txt
+/coverage.html
+/docs/index.md
+/docs/.nojekyll

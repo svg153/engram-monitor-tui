@@ -1,0 +1,60 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ["1.18", "1.24"]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Test with coverage
+        run: |
+          set -e
+          go test ./... -coverprofile=coverage.out
+          go tool cover -func=coverage.out | tee coverage.txt
+          total=$(grep total: coverage.txt | awk '{print $3}' | sed 's/%//')
+          echo "### Coverage" >> $GITHUB_STEP_SUMMARY
+          awk '/^total:/ {print "* Total coverage: " $3}' coverage.txt >> $GITHUB_STEP_SUMMARY
+          if awk -v cov="$total" 'BEGIN {exit cov<40?1:0}'; then
+            echo "Coverage OK: ${total}%"
+          else
+            echo "Coverage ${total}% is below threshold 40%" >&2
+            exit 1
+          fi
+      - name: Generate coverage html
+        run: go tool cover -html=coverage.out -o coverage.html
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report-${{ matrix.go-version }}
+          path: |
+            coverage.out
+            coverage.html
+            coverage.txt
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          files: coverage.out
+          verbose: true
+      - name: Build linux binary
+        run: |
+          mkdir -p dist
+          GOOS=linux GOARCH=amd64 go build -ldflags="-X main.version=ci-${{ github.sha }}" -o dist/engram-monitor-tui_linux_amd64 ./cmd/engram-monitor-tui
+      - name: Smoke test binary
+        run: |
+          ./dist/engram-monitor-tui_linux_amd64 version
+          ./dist/engram-monitor-tui_linux_amd64 help >/dev/null
+          ./dist/engram-monitor-tui_linux_amd64 projects list --help >/dev/null
+      - name: Upload binary
+        uses: actions/upload-artifact@v7
+        with:
+          name: binary-dist-${{ matrix.go-version }}
+          path: dist/engram-monitor-tui_linux_amd64
