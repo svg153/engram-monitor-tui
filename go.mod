@@ -1,6 +1,6 @@
 module github.com/svg153/engram-monitor-tui
 
-go 1.18
+go 1.24
 
 require (
 	github.com/charmbracelet/bubbles v0.16.1

@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/svg153/engram-monitor-tui/actions/workflows/ci.yml/badge.svg)](https://github.com/svg153/engram-monitor-tui/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/svg153/engram-monitor-tui)](https://github.com/svg153/engram-monitor-tui/releases/latest)
-[![Go](https://img.shields.io/badge/Go-1.18%2B-00ADD8?logo=go)](https://golang.org)
+[![Go](https://img.shields.io/badge/Go-1.24%2B-00ADD8?logo=go)](https://golang.org)
 
 `engram-monitor-tui` is a **Go CLI + TUI** for inspecting and administering a local [Engram](https://github.com/Gentleman-Programming/engram) memory server without relying on the web dashboard.
 
@@ -44,7 +44,7 @@ $HOME/.local/bin/engram-monitor-tui
 
 ## Requirements
 
-- Go `1.18+`
+- Go `1.24+`
 - a running Engram server, normally at `http://127.0.0.1:7437`
 
 ## Quick start
