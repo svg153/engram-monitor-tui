@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -208,7 +209,7 @@ func (m Model) loadAll() tea.Cmd {
 			}
 		}
 		if len(errs) > 0 {
-			return loadMsg{err: fmt.Errorf(strings.Join(errs, "; "))}
+			return loadMsg{err: errors.New(strings.Join(errs, "; "))}
 		}
 
 		return loadMsg{
