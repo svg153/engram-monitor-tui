@@ -70,7 +70,7 @@ func (r Runner) Run(args []string, stdout, stderr io.Writer) int {
 func (r Runner) runTUI(args []string, stderr io.Writer) int {
 	fs := flag.NewFlagSet("tui", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	if err := fs.Parse(args); err != nil {
 		if err == flag.ErrHelp {
 			return 0
@@ -87,7 +87,7 @@ func (r Runner) runTUI(args []string, stderr io.Writer) int {
 func (r Runner) runHealth(args []string, stdout, stderr io.Writer) int {
 	fs := flag.NewFlagSet("health", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	asJSON := fs.Bool("json", false, "Output JSON")
 	if err := fs.Parse(args); err != nil {
 		if err == flag.ErrHelp {
@@ -116,7 +116,7 @@ func (r Runner) runProjects(args []string, stdout, stderr io.Writer) int {
 	}
 	fs := flag.NewFlagSet("projects list", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	asJSON := fs.Bool("json", false, "Output JSON")
 	if err := fs.Parse(args[1:]); err != nil {
 		if err == flag.ErrHelp {
@@ -148,7 +148,7 @@ func (r Runner) runSessions(args []string, stdout, stderr io.Writer) int {
 	}
 	fs := flag.NewFlagSet("sessions list", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	project := fs.String("project", "", "Filter by project")
 	asJSON := fs.Bool("json", false, "Output JSON")
 	if err := fs.Parse(args[1:]); err != nil {
@@ -209,7 +209,7 @@ func (r Runner) runPrompts(args []string, stdout, stderr io.Writer) int {
 	}
 	fs := flag.NewFlagSet("prompts list", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	project := fs.String("project", "", "Filter by project")
 	asJSON := fs.Bool("json", false, "Output JSON")
 	if err := fs.Parse(args[1:]); err != nil {
@@ -262,7 +262,7 @@ func (r Runner) runMemories(args []string, stdout, stderr io.Writer) int {
 	}
 	fs := flag.NewFlagSet("memories search", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	query := fs.String("query", "", "Search text")
 	typ := fs.String("type", "", "Observation type")
 	project := fs.String("project", "", "Project filter")
@@ -316,7 +316,7 @@ func (r Runner) runMemories(args []string, stdout, stderr io.Writer) int {
 func (r Runner) runExport(args []string, stdout, stderr io.Writer) int {
 	fs := flag.NewFlagSet("export", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	project := fs.String("project", "", "Optional project filter")
 	out := fs.String("out", "", "Output file")
 	if err := fs.Parse(args); err != nil {
@@ -347,7 +347,7 @@ func (r Runner) runExport(args []string, stdout, stderr io.Writer) int {
 func (r Runner) runMergeProjects(args []string, stdout, stderr io.Writer) int {
 	fs := flag.NewFlagSet("merge-projects", flag.ContinueOnError)
 	fs.SetOutput(stderr)
-	addr := fs.String("addr", "http://127.0.0.1:7437", "Engram HTTP server address")
+	addr := fs.String("addr", defaultAddr(), "Engram HTTP server address")
 	from := fs.String("from", "", "Source project")
 	to := fs.String("to", "", "Destination project")
 	if err := fs.Parse(args); err != nil {
@@ -409,6 +409,14 @@ func or(value, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+// defaultAddr returns the configured Engram address from env or the hardcoded default.
+func defaultAddr() string {
+	if addr := os.Getenv("ENGRAM_ADDR"); addr != "" {
+		return addr
+	}
+	return "http://127.0.0.1:7437"
 }
 
 func projectOf(obs model.Observation) string {
